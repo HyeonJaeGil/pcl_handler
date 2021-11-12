@@ -51,3 +51,5 @@ catkin_package(
 add_executable(pointcloud_to_pcd src/pointcloud_to_pcd.cpp)
 target_link_libraries(pointcloud_to_pcd ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
+add_executable(pointcloud_concatenater src/pointcloud_concatenater.cpp)
+target_link_libraries(pointcloud_concatenater ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
