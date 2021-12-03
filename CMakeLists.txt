@@ -20,6 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   tf2
   tf2_ros
+  velodyne_pcl
 )
 
 include_directories(
@@ -53,3 +54,6 @@ target_link_libraries(pointcloud_to_pcd ${Boost_LIBRARIES} ${catkin_LIBRARIES} $
 
 add_executable(pointcloud_concatenater src/pointcloud_concatenater.cpp)
 target_link_libraries(pointcloud_concatenater ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+
+add_executable(velodyne_filter src/velodyne_filter.cpp)
+target_link_libraries(velodyne_filter ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
