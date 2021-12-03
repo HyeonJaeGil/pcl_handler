@@ -1,30 +1,25 @@
-#include <ros/ros.h>
+// #include <ros/ros.h>
 #include <velodyne_pcl/point_types.h>
-#include <sensor_msgs/PointCloud2.h>
+// #include <sensor_msgs/PointCloud2.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/conversions.h>
-#include <iostream>
+// #include <iostream>
 #include <cmath>
+#include "../include/velodyne_handler.h"
 
-class velodyneFilter
+class velodyneFilter : public velodyneHandler
 {
 public:
     velodyneFilter();
-    std::string cloud_in_topic_;
-    std::string cloud_out_topic_;
-    ros::Publisher pub_;
-    ros::Subscriber sub_;
     void cloud_cb(const boost::shared_ptr<const sensor_msgs::PointCloud2> in_cloud);
 
 protected:
-    ros::NodeHandle nh_;
-
 private:
 
 };
 
-velodyneFilter::velodyneFilter()
-    :cloud_in_topic_("velodyne_points"), cloud_out_topic_("velodyne_points_filtered")
+velodyneFilter::velodyneFilter() 
+    :velodyneHandler("velodyne_points", "velodyne_points_filtered")
 {
     pub_ = nh_.advertise<sensor_msgs::PointCloud2>(cloud_out_topic_, 1);
     sub_ = nh_.subscribe(cloud_in_topic_, 1, &velodyneFilter::cloud_cb, this);   
@@ -44,7 +39,7 @@ void velodyneFilter::cloud_cb(const boost::shared_ptr<const sensor_msgs::PointCl
     {
         double distance = sqrt(pow(pt.x, 2) + pow(pt.y, 2));
         float angle = atan2(pt.y, pt.x);
-        if(! ( angle >= DEG2RAD(120) || angle <= DEG2RAD(-120) ) || distance >= 1.2)
+        if(! ( angle >= DEG2RAD(120) || angle <= DEG2RAD(-120) ) || distance >= 1.2 || pt.z >= 0.1)
             new_pcl_cloud_ptr->push_back(velodyne_pcl::PointXYZIRT(pt));      
     }
 
