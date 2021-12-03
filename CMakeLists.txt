@@ -43,7 +43,7 @@ include_directories(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+ INCLUDE_DIRS include
 #  LIBRARIES pcl_handler
 #  CATKIN_DEPENDS geometry_msgs pcl_conversions pcl_msgs roscpp sensor_msgs tf2 tf2_ros
 #  DEPENDS system_lib
@@ -57,3 +57,6 @@ target_link_libraries(pointcloud_concatenater ${Boost_LIBRARIES} ${catkin_LIBRAR
 
 add_executable(velodyne_filter src/velodyne_filter.cpp)
 target_link_libraries(velodyne_filter ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+
+add_executable(velodyne_projector src/velodyne_projector.cpp)
+target_link_libraries(velodyne_projector ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
