@@ -21,6 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2
   tf2_ros
   velodyne_pcl
+  laser_geometry
 )
 
 include_directories(
@@ -60,3 +61,6 @@ target_link_libraries(velodyne_filter ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${P
 
 add_executable(velodyne_projector src/velodyne_projector.cpp)
 target_link_libraries(velodyne_projector ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+
+add_executable(sick_filter src/sick_filter.cpp)
+target_link_libraries(sick_filter ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
