@@ -39,7 +39,7 @@ void velodyneFilter::cloud_cb(const boost::shared_ptr<const sensor_msgs::PointCl
     {
         double distance = sqrt(pow(pt.x, 2) + pow(pt.y, 2));
         float angle = atan2(pt.y, pt.x);
-        if(! ( angle >= DEG2RAD(120) || angle <= DEG2RAD(-120) ) || distance >= 1.2 || pt.z >= 0.1)
+        if(! ( angle >= DEG2RAD(140) || angle <= DEG2RAD(-140) ) || distance >= 1.0 || pt.z >= 0.3)
             new_pcl_cloud_ptr->push_back(velodyne_pcl::PointXYZIRT(pt));      
     }
 

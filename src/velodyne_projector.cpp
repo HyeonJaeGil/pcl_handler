@@ -19,7 +19,8 @@ private:
 };
 
 velodyneProjector::velodyneProjector() 
-    :velodyneHandler("velodyne_points", "velodyne_points_projected")
+    // :velodyneHandler("velodyne_points", "velodyne_points_projected")
+    :velodyneHandler("velodyne_points_filtered", "velodyne_points_projected")
 {
     pub_ = nh_.advertise<sensor_msgs::PointCloud2>(cloud_out_topic_, 1);
     sub_ = nh_.subscribe(cloud_in_topic_, 1, &velodyneProjector::cloud_cb, this);   
@@ -37,7 +38,7 @@ void velodyneProjector::cloud_cb(const boost::shared_ptr<const sensor_msgs::Poin
 
     for ( auto& pt : pcl_cloud_ptr->points)
     {
-        if (pt.z <= 1.5 && pt.z >= -0.5){
+        if (pt.z <= 2.0 && pt.z >= -0.8){
             pt.z = 0;
             new_pcl_cloud_ptr->push_back(velodyne_pcl::PointXYZIRT(pt));      
         }
