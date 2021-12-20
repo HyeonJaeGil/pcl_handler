@@ -1,16 +1,17 @@
-// #include <ros/ros.h>
 #include <velodyne_pcl/point_types.h>
-// #include <sensor_msgs/PointCloud2.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/conversions.h>
-// #include <iostream>
 #include <cmath>
 #include "../include/velodyne_handler.h"
 
-class velodyneFilter : public velodyneHandler
+
+class VelodyneFilter : public VelodyneHandler
 {
 public:
-    velodyneFilter();
+    double deg_limit_;
+    double backward_min_distance_;
+    double backward_min_height_;
+    VelodyneFilter();
     void cloud_cb(const boost::shared_ptr<const sensor_msgs::PointCloud2> in_cloud);
 
 protected:
@@ -18,16 +19,20 @@ private:
 
 };
 
-velodyneFilter::velodyneFilter() 
-    :velodyneHandler("velodyne_points", "velodyne_points_filtered")
+VelodyneFilter::VelodyneFilter() 
 {
+    nh_.param<std::string>("cloud_in_topic_", cloud_in_topic_, "velodyne_points");
+    nh_.param<std::string>("cloud_out_topic_", cloud_out_topic_, "velodyne_points_filtered");
+    nh_.param<double>("deg_limit", deg_limit_, 140.0);
+    nh_.param<double>("backward_min_distance", backward_min_distance_, 1.0);
+    nh_.param<double>("backward_min_height", backward_min_height_, 0.3);
     pub_ = nh_.advertise<sensor_msgs::PointCloud2>(cloud_out_topic_, 1);
-    sub_ = nh_.subscribe(cloud_in_topic_, 1, &velodyneFilter::cloud_cb, this);   
+    sub_ = nh_.subscribe(cloud_in_topic_, 1, &VelodyneFilter::cloud_cb, this);   
 
     ROS_INFO("Start velodyne_filter node ...");
 }
 
-void velodyneFilter::cloud_cb(const boost::shared_ptr<const sensor_msgs::PointCloud2> in_cloud)
+void VelodyneFilter::cloud_cb(const boost::shared_ptr<const sensor_msgs::PointCloud2> in_cloud)
 {
     pcl::PCLPointCloud2 pcl_pointcloud2;
     pcl_conversions::toPCL(*in_cloud, pcl_pointcloud2);
@@ -38,8 +43,8 @@ void velodyneFilter::cloud_cb(const boost::shared_ptr<const sensor_msgs::PointCl
     for (const auto& pt : pcl_cloud_ptr->points)
     {
         double distance = sqrt(pow(pt.x, 2) + pow(pt.y, 2));
-        float angle = atan2(pt.y, pt.x);
-        if(! ( angle >= DEG2RAD(140) || angle <= DEG2RAD(-140) ) || distance >= 1.0 || pt.z >= 0.3)
+        double angle = atan2(pt.y, pt.x);
+        if(! ( angle >= DEG2RAD(deg_limit_) || angle <= DEG2RAD(-1*deg_limit_) ) || distance >= backward_min_distance_ || pt.z >= backward_min_height_)
             new_pcl_cloud_ptr->push_back(velodyne_pcl::PointXYZIRT(pt));      
     }
 
@@ -55,7 +60,7 @@ void velodyneFilter::cloud_cb(const boost::shared_ptr<const sensor_msgs::PointCl
 
 int main(int argc, char** argv){
     ros::init(argc, argv, "velodyne_filter");
-    velodyneFilter vf;
+    VelodyneFilter vf;
     ros::spin();
 
     return 0;

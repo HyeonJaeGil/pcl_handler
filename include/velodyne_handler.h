@@ -3,13 +3,13 @@
 #include <sensor_msgs/PointCloud2.h>
 
 
-class velodyneHandler
+class VelodyneHandler
 {
 public:
-    velodyneHandler();
-    velodyneHandler(std::string in_topic, std::string out_topic)
+    VelodyneHandler(){};
+    VelodyneHandler(std::string in_topic, std::string out_topic)
         :cloud_in_topic_(in_topic), cloud_out_topic_(out_topic) {};
-    // virtual ~velodyneHandler();
+    // virtual ~VelodyneHandler();
     std::string cloud_in_topic_;
     std::string cloud_out_topic_;
     ros::Publisher pub_;

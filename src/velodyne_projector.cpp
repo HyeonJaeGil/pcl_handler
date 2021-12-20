@@ -1,34 +1,35 @@
-// #include <ros/ros.h>
 #include <velodyne_pcl/point_types.h>
-// #include <sensor_msgs/PointCloud2.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/conversions.h>
-// #include <iostream>
 #include <cmath>
 #include "../include/velodyne_handler.h"
 
-class velodyneProjector : public velodyneHandler
+class VelodyneProjector : public VelodyneHandler
 {
 public:
-    velodyneProjector();
+    VelodyneProjector();
     void cloud_cb(const boost::shared_ptr<const sensor_msgs::PointCloud2> in_cloud);
+    double min_z_;
+    double max_z_;
 
 protected:
 private:
 
 };
 
-velodyneProjector::velodyneProjector() 
-    // :velodyneHandler("velodyne_points", "velodyne_points_projected")
-    :velodyneHandler("velodyne_points_filtered", "velodyne_points_projected")
+VelodyneProjector::VelodyneProjector() 
 {
+    nh_.param<std::string>("cloud_in_topic_", cloud_in_topic_, "velodyne_points");
+    nh_.param<std::string>("cloud_out_topic_", cloud_out_topic_, "velodyne_points_projected");
+    nh_.param<double>("min_z", min_z_, -0.8);
+    nh_.param<double>("max_z", max_z_,  2.0);
     pub_ = nh_.advertise<sensor_msgs::PointCloud2>(cloud_out_topic_, 1);
-    sub_ = nh_.subscribe(cloud_in_topic_, 1, &velodyneProjector::cloud_cb, this);   
+    sub_ = nh_.subscribe(cloud_in_topic_, 1, &VelodyneProjector::cloud_cb, this);   
 
     ROS_INFO("Start velodyne_projector node ...");
 }
 
-void velodyneProjector::cloud_cb(const boost::shared_ptr<const sensor_msgs::PointCloud2> in_cloud)
+void VelodyneProjector::cloud_cb(const boost::shared_ptr<const sensor_msgs::PointCloud2> in_cloud)
 {
     pcl::PCLPointCloud2 pcl_pointcloud2;
     pcl_conversions::toPCL(*in_cloud, pcl_pointcloud2);
@@ -38,7 +39,7 @@ void velodyneProjector::cloud_cb(const boost::shared_ptr<const sensor_msgs::Poin
 
     for ( auto& pt : pcl_cloud_ptr->points)
     {
-        if (pt.z <= 2.0 && pt.z >= -0.8){
+        if (pt.z <= max_z_ && pt.z >= min_z_){
             pt.z = 0;
             new_pcl_cloud_ptr->push_back(velodyne_pcl::PointXYZIRT(pt));      
         }
@@ -57,7 +58,7 @@ void velodyneProjector::cloud_cb(const boost::shared_ptr<const sensor_msgs::Poin
 
 int main(int argc, char** argv){
     ros::init(argc, argv, "velodyne_projector");
-    velodyneProjector vp;
+    VelodyneProjector vp;
     ros::spin();
 
     return 0;
