@@ -1,0 +1,19 @@
+<launch>
+
+    <arg name="handheld" default="false"/>
+
+    <node name="velodyne_filter" pkg="pcl_handler" type="velodyne_filter" output="screen"/>
+        <param name="cloud_in_topic_" value="velodyne_points" type="str"/>
+        <param name="cloud_out_topic_" value="velodyne_points_filtered" type="str"/>
+        <group if="$(arg handheld)">
+            <param name="deg_limit" value="140.0" type="double"/>
+            <param name="backward_min_distance" value="1.0" type="double"/>
+            <param name="backward_min_height" value="0.3" type="double"/>
+        </group>        
+        <group unless="$(arg handheld)">
+            <param name="deg_limit" value="180.0" type="double"/>
+            <param name="backward_min_distance" value="0.0" type="double"/>
+            <param name="backward_min_height" value="-10.0" type="double"/>
+        </group>
+
+</launch>
