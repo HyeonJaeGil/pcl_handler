@@ -19,9 +19,9 @@ private:
 
 VelodyneProjector::VelodyneProjector() 
 {
-    nh_.param<std::string>("cloud_in_topic_", cloud_in_topic_, "velodyne_points");
-    nh_.param<std::string>("cloud_out_topic_", cloud_out_topic_, "velodyne_points_projected");
-    nh_.param<double>("min_z", min_z_, -0.8);
+    nh_.param<std::string>("cloud_in_topic", cloud_in_topic_, "velodyne_points");
+    nh_.param<std::string>("cloud_out_topic", cloud_out_topic_, "velodyne_points_projected");
+    nh_.param<double>("min_z", min_z_, -1.2);
     nh_.param<double>("max_z", max_z_,  2.0);
     pub_ = nh_.advertise<sensor_msgs::PointCloud2>(cloud_out_topic_, 1);
     sub_ = nh_.subscribe(cloud_in_topic_, 1, &VelodyneProjector::cloud_cb, this);   

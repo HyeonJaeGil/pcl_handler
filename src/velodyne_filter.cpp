@@ -21,8 +21,8 @@ private:
 
 VelodyneFilter::VelodyneFilter() 
 {
-    nh_.param<std::string>("cloud_in_topic_", cloud_in_topic_, "velodyne_points");
-    nh_.param<std::string>("cloud_out_topic_", cloud_out_topic_, "velodyne_points_filtered");
+    nh_.param<std::string>("cloud_in_topic", cloud_in_topic_, "velodyne_points");
+    nh_.param<std::string>("cloud_out_topic", cloud_out_topic_, "velodyne_points_filtered");
     nh_.param<double>("deg_limit", deg_limit_, 140.0);
     nh_.param<double>("backward_min_distance", backward_min_distance_, 1.0);
     nh_.param<double>("backward_min_height", backward_min_height_, 0.3);

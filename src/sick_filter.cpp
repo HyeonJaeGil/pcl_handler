@@ -34,9 +34,9 @@ private:
 SickFilter::SickFilter() 
 {
     nh_.param<std::string>("scan_in_topic", scan_in_topic_, "scan");
-    nh_.param<std::string>("cloud_out_topic_", cloud_out_topic_, "sick_points");
+    nh_.param<std::string>("cloud_out_topic", cloud_out_topic_, "sick_points");
     nh_.param<double>("deg_limit", deg_limit_, 130.0);
-    nh_.param<double>("backward_min_distance_", backward_min_distance_, 0.4);
+    nh_.param<double>("backward_min_distance", backward_min_distance_, 0.4);
     pub_ = nh_.advertise<sensor_msgs::PointCloud2>(cloud_out_topic_, 1);
     sub_ = nh_.subscribe(scan_in_topic_, 1, &SickFilter::scan_cb, this);   
 
