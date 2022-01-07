@@ -14,15 +14,22 @@ public:
 
 protected:
 private:
+    ros::NodeHandle nh_;
 
 };
 
 VelodyneProjector::VelodyneProjector() 
 {
-    nh_.param<std::string>("cloud_in_topic", cloud_in_topic_, "velodyne_points");
-    nh_.param<std::string>("cloud_out_topic", cloud_out_topic_, "velodyne_points_projected");
-    nh_.param<double>("min_z", min_z_, -1.2);
-    nh_.param<double>("max_z", max_z_,  2.0);
+    cloud_in_topic_ = "velodyne_points_filtered";
+    cloud_out_topic_= "velodyne_points_projected";
+    // nh_.getParam("cloud_in_topic", cloud_in_topic_);
+    // nh_.getParam("cloud_out_topic", cloud_out_topic_);
+    // nh_.getParam("min_z", min_z_);
+    // nh_.getParam("max_z", max_z_);
+    // nh_.param<std::string>("cloud_in_topic", cloud_in_topic_, "velodyne_points_filtered");
+    // nh_.param<std::string>("cloud_out_topic", cloud_out_topic_, "velodyne_points_projected");
+    nh_.param<double>("min_z", min_z_, -0.5);
+    nh_.param<double>("max_z", max_z_,  -0.4);
     pub_ = nh_.advertise<sensor_msgs::PointCloud2>(cloud_out_topic_, 1);
     sub_ = nh_.subscribe(cloud_in_topic_, 1, &VelodyneProjector::cloud_cb, this);   
 

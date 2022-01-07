@@ -1,0 +1,7 @@
+<launch>
+
+    <node name="velodyne_projector" pkg="pcl_handler" type="velodyne_projector" output="screen"/>
+        <param name="cloud_in_topic" value="velodyne_points_filtered" type="str"/>
+        <param name="cloud_out_topic" value="velodyne_points_projected" type="str"/>
+
+</launch>

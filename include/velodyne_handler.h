@@ -17,7 +17,7 @@ public:
     void cloud_cb(const boost::shared_ptr<const sensor_msgs::PointCloud2> in_cloud);
 
 protected:
-    ros::NodeHandle nh_;
+    // ros::NodeHandle nh_;
 
 private:
 
