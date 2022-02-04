@@ -12,6 +12,7 @@ public:
     // virtual ~VelodyneHandler();
     std::string cloud_in_topic_;
     std::string cloud_out_topic_;
+    std::string laser_out_topic_;
     ros::Publisher pub_;
     ros::Subscriber sub_;
     void cloud_cb(const boost::shared_ptr<const sensor_msgs::PointCloud2> in_cloud);

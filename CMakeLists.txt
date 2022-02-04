@@ -53,6 +53,9 @@ catkin_package(
 add_executable(pointcloud_to_pcd src/pointcloud_to_pcd.cpp)
 target_link_libraries(pointcloud_to_pcd ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
+add_executable(velodyne_to_laserscan src/velodyne_to_laserscan.cpp)
+target_link_libraries(velodyne_to_laserscan ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+
 add_executable(pointcloud_concatenater src/pointcloud_concatenater.cpp)
 target_link_libraries(pointcloud_concatenater ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
@@ -64,3 +67,9 @@ target_link_libraries(velodyne_projector ${Boost_LIBRARIES} ${catkin_LIBRARIES} 
 
 add_executable(sick_filter src/sick_filter.cpp)
 target_link_libraries(sick_filter ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+
+add_executable(hesai_filter src/hesai_filter.cpp)
+target_link_libraries(hesai_filter ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+
+add_executable(hesai_to_laserscan src/hesai_to_laserscan.cpp)
+target_link_libraries(hesai_to_laserscan ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
