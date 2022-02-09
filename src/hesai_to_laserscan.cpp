@@ -38,8 +38,8 @@ Hesai2Laserscan::Hesai2Laserscan(ros::NodeHandle* nodehandle)
     :nh_(*nodehandle)
 {
     cloud_in_topic_ = "/hesai/pandar";
-    laser_out_topic_ = "/hesai_scan";
-    nh_.param<double>("max_z", max_z_,  0.0);
+    laser_out_topic_ = "/projected_scan";
+    nh_.param<double>("max_z", max_z_,  0.2);
     nh_.param<double>("min_z", min_z_, -1.4);
     nh_.param<double>("max_height", max_height, 0.2);
     nh_.param<double>("min_height", min_height, -0.2);
@@ -68,7 +68,7 @@ void Hesai2Laserscan::cloud_cb(const boost::shared_ptr<const sensor_msgs::PointC
     for ( auto& pt : pcl_cloud_ptr->points)
     {
         double distance = sqrt(pow(pt.x, 2) + pow(pt.y, 2));
-        if (distance > 1.0 && pt.z <= max_z_ && pt.z >= min_z_){
+        if (distance > 0.5 && pt.z <= max_z_ && pt.z >= min_z_){
             pt.z = 0;
             proj_cloud_ptr->push_back(pcl::PointXYZI(pt));      
         }

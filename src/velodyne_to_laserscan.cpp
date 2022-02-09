@@ -37,9 +37,9 @@ Velodyne2Laserscan::Velodyne2Laserscan(ros::NodeHandle* nodehandle)
     :nh_(*nodehandle)
 {
     cloud_in_topic_ = "/velodyne_points";
-    laser_out_topic_ = "/velo_scan";
-    nh_.param<double>("min_z", min_z_, -0.4);
-    nh_.param<double>("max_z", max_z_,  0.1);
+    laser_out_topic_ = "/projected_scan";
+    nh_.param<double>("max_z", max_z_,  0.2);
+    nh_.param<double>("min_z", min_z_, -1.3);
     nh_.param<double>("max_height", max_height, 0.0);
     nh_.param<double>("min_height", min_height, -1.1);
     nh_.param<double>("angle_min" , angle_min, -3.141592);
