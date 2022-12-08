@@ -5,6 +5,8 @@
 #include <sensor_msgs/LaserScan.h>
 #include <sensor_msgs/point_cloud2_iterator.h>
 #include <pcl/filters/voxel_grid.h>
+#include <pcl/filters/statistical_outlier_removal.h>
+
 
 
 class Hesai2Laserscan : public HesaiHandler
@@ -36,14 +38,14 @@ Hesai2Laserscan::Hesai2Laserscan(ros::NodeHandle* nodehandle)
     :nh_(*nodehandle)
 {
     cloud_in_topic_ = "/hesai/pandar";
-    laser_out_topic_ = "/hesai_scan";
-    nh_.param<double>("min_z", min_z_, -1.5);
-    nh_.param<double>("max_z", max_z_,  0.0);
-    nh_.param<double>("max_height", max_height, 0.0);
-    nh_.param<double>("min_height", min_height, -1.1);
+    laser_out_topic_ = "/projected_scan";
+    nh_.param<double>("max_z", max_z_,  0.2);
+    nh_.param<double>("min_z", min_z_, -1.4);
+    nh_.param<double>("max_height", max_height, 0.2);
+    nh_.param<double>("min_height", min_height, -0.2);
     nh_.param<double>("angle_min" , angle_min, -3.141592);
     nh_.param<double>("angle_max" , angle_max, 3.141592); 
-    nh_.param<double>("angle_increment", angle_increment, 0.003);
+    nh_.param<double>("angle_increment", angle_increment, 0.01);
     nh_.param<double>("time_increment", time_increment, 0.0);
     nh_.param<double>("scan_time", scan_time, 0.1);
     nh_.param<double>("range_min", range_min, 0.5);
@@ -66,7 +68,7 @@ void Hesai2Laserscan::cloud_cb(const boost::shared_ptr<const sensor_msgs::PointC
     for ( auto& pt : pcl_cloud_ptr->points)
     {
         double distance = sqrt(pow(pt.x, 2) + pow(pt.y, 2));
-        if (distance > 1.0 && pt.z <= max_z_ && pt.z >= min_z_){
+        if (distance > 0.5 && pt.z <= max_z_ && pt.z >= min_z_){
             pt.z = 0;
             proj_cloud_ptr->push_back(pcl::PointXYZI(pt));      
         }
@@ -74,10 +76,16 @@ void Hesai2Laserscan::cloud_cb(const boost::shared_ptr<const sensor_msgs::PointC
 
     pcl::PCLPointCloud2 proj_pointcloud2, proj_pointcloud2_filtered;
     pcl::toPCLPointCloud2(*proj_cloud_ptr, proj_pointcloud2);
-    pcl::VoxelGrid<pcl::PCLPointCloud2> voxelgrid;
-    voxelgrid.setInputCloud(boost::make_shared<pcl::PCLPointCloud2>(proj_pointcloud2));
-    voxelgrid.setLeafSize (0.05f, 0.05f, 0.05f); //leaf size  
-    voxelgrid.filter (proj_pointcloud2_filtered);          
+    // pcl::VoxelGrid<pcl::PCLPointCloud2> voxelgrid;
+    // voxelgrid.setInputCloud(boost::make_shared<pcl::PCLPointCloud2>(proj_pointcloud2));
+    // voxelgrid.setLeafSize (0.05f, 0.05f, 0.05f); //leaf size  
+    // voxelgrid.filter (proj_pointcloud2_filtered);
+    pcl::StatisticalOutlierRemoval<pcl::PCLPointCloud2> outlier_filter;
+    outlier_filter.setInputCloud(boost::make_shared<pcl::PCLPointCloud2>(proj_pointcloud2));
+    // outlier_filter.setInputCloud(boost::make_shared<pcl::PCLPointCloud2>(proj_pointcloud2_filtered));
+    outlier_filter.setMeanK(50);
+    outlier_filter.setStddevMulThresh(1.0);
+    outlier_filter.filter(proj_pointcloud2_filtered);
     pcl::fromPCLPointCloud2(proj_pointcloud2_filtered, *new_proj_cloud_ptr);
 
     sensor_msgs::PointCloud2 projected_cloud;
